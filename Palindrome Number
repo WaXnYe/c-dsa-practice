@@ -1,0 +1,151 @@
+# Palindrome Number
+
+題目:
+給定一個變數，判斷是否為回文
+
+要點:
+直接"反轉"原變數，並判斷是否一樣即可。
+
+程式碼:
+#include <stdio.h>
+#include <string.h>
+
+int isPalindrome(int x) {
+    if (x < 0) return 0;
+
+    char s[20];
+    sprintf(s, "%d", x);
+
+    int left = 0;
+    int right = strlen(s) - 1;
+
+    while (left < right) {
+        if (s[left] != s[right]) return 0;
+        left++;
+        right--;
+    }
+    return 1;
+}
+
+int main() {
+    int test_cases[] = {121, -121, 10, 1331, 7};
+    int n = 5;
+
+    for (int i = 0; i < n; i++) {
+        int x = test_cases[i];
+        int result = isPalindrome(x);
+        printf("x = %d -> %s\n", x, result ? "true" : "false");
+    }
+
+    return 0;
+}
+
+詳解:
+#include <stdio.h>
+#include <string.h>
+引入工具箱
+工具箱     提供什麼
+stdio.h    printf、sprintf（印東西）
+string.h   strlen（計算字串長度）
+
+int isPalindrome(int x) {
+回傳值 int -> C 沒有 bool 型別（要引入額外工具箱才有），所以這裡用 int，1 代表 True，0 代表 False
+
+if (x < 0) return 0;
+負數一定不是回文，所以直接回傳0(代表False)
+
+char s[20];
+先準備一個**字元陣列**（字串在 C 裡就是一排字元），大小開 20 格，足夠放任何整數。
+s 這個陣列：
+┌──┬──┬──┬──┬──┬─────┬──┐
+│  │  │  │  │  │ ... │  │   ← 20 個空格，目前都是空的
+└──┴──┴──┴──┴──┴─────┴──┘
+
+sprintf(s, "%d", x);
+`sprintf` 跟 `printf` 很像，差別是：
+- `printf` → 印到**畫面**
+- `sprintf` → 印到**字串（陣列）裡**
+所以 `sprintf(s, "%d", x)` 的意思就是：「把整數 x 轉成字串，存到 s 裡面」
+以 `x = 121` 為例，執行後 s 長這樣：
+s：
+┌───┬───┬───┬────┐
+│'1'│'2'│'1'│'\0'│  ...（後面還有空格但不重要）
+└───┴───┴───┴────┘
+  0    1    2    3
+
+int left = 0;
+int right = strlen(s) - 1;
+Python 用 `s[::-1]` 整個反轉再比較，C 我們改用**雙指標**從兩端往中間夾的方式來判斷。
+`strlen(s)` 計算字串長度，以 `"121"` 為例長度是 3，所以：
+- `left = 0` → 指向第一個字元 `'1'`
+- `right = 3 - 1 = 2` → 指向最後一個字元 `'1'`
+
+s：  '1'     '2'     '1'
+      ↑               ↑
+    left=0         right=2
+
+while (left < right) {
+        if (s[left] != s[right]) return 0;
+        left++;
+        right--;
+    }
+**`while (left < right)`**
+只要左指標還沒碰到右指標就繼續跑，概念是「還有字元沒比對完」。
+
+**`if (s[left] != s[right]) return 0;`**
+比對兩端字元，如果不一樣就直接回傳 `0`（False），不用再看了。
+
+**`left++; right--;`**
+兩端往中間各走一步，繼續下一輪比對。
+
+以 `x = 121` 為例跑一遍：
+```
+第一輪：s[0]='1' vs s[2]='1' → 相同，left=1, right=1
+第二輪：left(1) 不小於 right(1) → 迴圈結束
+```
+
+以 `x = 123` 為例：
+```
+第一輪：s[0]='1' vs s[2]='3' → 不同，直接 return 0
+
+return 1;
+走完整個迴圈都沒有不一樣的字元，就是回文，回傳 1（True）。
+
+printf("x = %d -> %s\n", x, result ? "true" : "false");
+格式字串裡有幾個佔位符，後面就要跟幾個值，依序一對一填入，而此行有兩個佔位符
+printf（“x = %d -> %s\n”， x， result ？「true」：「false」;
+//            ↑    ↑        ↑              ↑
+//          第一格 第二格   填第一格        填第二格
+第一個佔位符 %d → 填入 x
+"x = %d -> %s\n"
+      ↑
+    填 x
+`x = 121` 的話，`%d` 的位置就變成 `121`：
+"x = 121 -> %s\n"
+
+第二個佔位符 %s → 填入字串
+"x = %d -> %s\n"
+             ↑
+           填字串
+%s 是字串的佔位符，它等著被填入 "true" 或 "false"。
+
+三元運算子決定填哪個字串
+result ? "true" : "false"
+這行的結構是：
+條件 ? 成立時的值 : 不成立時的值
+先看 result 是什麼    isPalindrome 回傳的 1 或 0
+result 是 1（True）   整個運算子的結果是 "true"
+result 是 0（False）  整個運算子的結果是 "false"
+
+以 x = 121 為例：
+result = 1
+result ? "true" : "false"
+→ 1 ? "true" : "false"
+→ "true"
+
+以 x = -121 為例：
+result = 0
+result ? "true" : "false"
+→ 0 ? "true" : "false"
+→ "false"
+
