@@ -1,0 +1,106 @@
+# Two Sum
+
+題目:
+給定:
+一個整數陣列 nums
+一個整數 target
+
+目標:
+找出"兩個不同位置"的數字，加起來等於target
+回傳它們的"index"
+
+限制:
+不能用同一個元素兩次
+且一定只有一組解
+
+程式碼:
+#include <stdio.h>
+#include <stdlib.h>
+
+int* twoSum(int* nums, int numsSize, int target) {
+    for (int i = 0; i < numsSize; i++) {
+        for (int j = i + 1; j < numsSize; j++) {
+            if (nums[i] + nums[j] == target) {
+                int* result = (int*)malloc(2 * sizeof(int));
+                result[0] = i;
+                result[1] = j;
+                return result;
+            }
+        }
+    }
+    return NULL;
+}
+
+int main() {
+    int nums[] = {2, 7, 9, 11, 8};
+    int target = 15;
+    int numsSize = 5;
+
+    int* result = twoSum(nums, numsSize, target);
+
+    if (result != NULL) {
+        printf("[%d, %d]\n", result[0], result[1]);
+        free(result);
+    }
+
+    return 0;
+}
+
+詳解:
+#include <stdio.h>
+#include <stdlib.h>
+起初的兩行為 "匯入工具箱"，根據所需的功能匯入特定的工具箱
+例如:
+工具箱      功能
+stdio.h -> printf(印東西到畫面)
+stdlib.h -> malloc、free(借還記憶體)
+
+int* twoSum(int* nums, int numsSize, int target) {
+| 函式回傳值 | `int*` | 回傳一個指向整數的指標 |
+| 第一個參數 | `int* nums` | nums 是一個整數陣列的指標 |
+| 第二個參數 | `int numsSize` | 陣列長度，Python 可以用 `len()` 自動取得，C 不行，要自己傳進來 |
+| 第三個參數 | `int target` | 目標值，跟 Python 一樣 |
+
+for (int i = 0; i < numsSize; i++) {
+跟 Python 的 for i in range(len(nums)) 完全一樣的意思，只是C要分成三部份寫
+
+for (int j = i + 1; j < numsSize; j++) {
+跟 Python 的 for j in range(i+1, len(nums)) 一樣，從 i+1 開始，避免重複配對同一個元素。
+
+if (nums[i] + nums[j] == target) {
+跟 Python 完全一樣的邏輯，就是語法括號位置不同而已：
+Python -> if nums[i] + nums[j] == target:
+
+int* result = (int*)malloc(2 * sizeof(int));
+Python 直接寫 `return [i, j]` 就好，因為 Python 會自動幫你準備空間。
+C 不會，你要**自己跟系統借一塊空間**來放答案。
+
+| 片段 | 說明 |
+|---|---|
+| `malloc(...)` | 跟系統借一塊記憶體，回傳那塊記憶體的地址 |
+| `2 * sizeof(int)` | 借的大小：2個整數的空間（通常是 2×4 = 8 bytes） |
+| `(int*)` | 把借到的地址標記成「整數型別的指標」，這樣才能用 `result[0]`、`result[1]` 存取 |
+| `int* result` | result 這個指標，記住借到的那塊記憶體的地址 |
+```
+
+printf("[%d, %d]\n", result[0], result[1]);
+"[%d, %d]\n" 格式字串，%d 是整數的佔位符，\n 是換行
+關於佔位符:
+result[0] = 1  →  填入第一個 %d
+result[1] = 3  →  填入第二個 %d
+因為 C 需要知道「這個空格要放什麼型別的資料」，才能正確解讀記憶體裡的值。
+常見的佔位符：
+佔位符  對應型別      範例輸出
+%d      整數 int        42
+%f      浮點數 float    3.14
+%c      字元 char       A
+%s      字串           hello
+
+free(result);
+借了記憶體，用完一定要還！ Python 有自動垃圾回收，C 沒有。如果不寫 free，那塊記憶體就會一直被佔著，叫做 memory leak（記憶體洩漏）。
+
+return 0;
+`main()` 結束時回傳 `0`，代表程式正常執行完畢，這是 C 語言的慣例。
+
+
+
