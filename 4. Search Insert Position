@@ -1,0 +1,100 @@
+# Search Insert Position
+
+題目:
+給定一組陣列和一個目標數字，找出該目標位於此陣列的哪個索引(index)，如果沒有，則找出應該放在此陣列的哪個索引。
+
+程式碼:
+#include <stdio.h>
+
+int searchInsert(int* nums, int numsSize, int target) {
+    int left = 0;
+    int right = numsSize - 1;
+
+    while (left <= right) {
+        int mid = (left + right) / 2;
+
+        if (nums[mid] == target) {
+            return mid;
+        } else if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return left;
+}
+
+int main() {
+    int nums[] = {1, 3, 5, 6};
+    int numsSize = 4;
+    int target = 5;
+
+    int k = searchInsert(nums, numsSize, target);
+    printf("k = %d\n", k);
+
+    return 0;
+}
+
+詳解:
+int searchInsert(int* nums, int numsSize, int target) {
+位置        C 寫法          說明
+回傳值       int            回傳插入位置的 index，是整數
+第一個參數   int* nums      整數陣列的指標，跟 Two Sum 那題一樣
+第二個參數   int numsSize   陣列長度，C 不能自動取得
+第三個參數   int target     目標值
+
+int left = 0;
+int right = numsSize - 1;
+
+以 nums = {1, 3, 5, 6} 為例：
+
+index:   0    1    2    3
+        ┌───┬────┬────┬────┐
+nums:   │ 1 │  3 │  5 │  6 │
+        └───┴────┴────┴────┘
+          ↑                ↑
+        left=0          right=3
+
+while (left <= right) {
+以第一輪 left=0, right=3 為例：
+mid = (0 + 3) / 2 = 1  （小數點直接捨去）
+index:   0    1    2    3
+        ┌───┬────┬────┬────┐
+nums:   │ 1 │  3 │  5 │  6 │
+        └───┴────┴────┴────┘
+          ↑    ↑            ↑
+        left  mid         right
+
+if (nums[mid] == target) {
+    return mid;
+} else if (nums[mid] < target) {
+    left = mid + 1;
+} else {
+    right = mid - 1;
+}
+跟 Python 邏輯完全一樣，逐一說明：
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
